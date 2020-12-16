@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  # Mysql
+  db:
+    image: mysql
+    env_file:
+      - ./docker/db/.env
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+    expose:
+      - 3306
+    security_opt:
+      - seccomp:unconfined
+
+  # Golang
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    env_file:
+      - ./docker/db/.env
+    volumes:
+      - ./api:/go/src/api
+    ports:
+      - 8080:8080
+    tty: true
+    links:
+      - db
+    depends_on:
+      - db
+    command: sh ./start_app.sh
+  # Nuxt.js
+  front:
+    build:
+      context: .
+      dockerfile: ./docker/front/Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./docker/front:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    tty: true
+    working_dir: /app
+    command: yarn run dev
+
+  # Nginx WebServer
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+      target: dev_stage
+    ports:
+      - 80:80
+    depends_on:
+      - front
+    environment:
+      TZ: 'Asia/Tokyo'
