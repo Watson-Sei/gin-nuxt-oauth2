@@ -2,9 +2,13 @@
   <div class="container">
     <div class="signup">
       <h2>Sign up</h2>
-      <input type="text" placeholder="Username" v-model="email">
-      <input type="password" placeholder="Password" v-model="password">
-      <button @click="signUp">Register</button>
+      <form @submit.prevent="signUp">
+        <label for="usernameTxt">Username:</label>
+        <input id="usernameTxt" type="text" v-model="email">
+        <label for="passwordTxt">Password:</label>
+        <input id="passwordTxt" type="password" v-model="password">
+        <button type="submit">Sign Up</button>
+      </form>
       <p>Do you have an account?
         <nuxt-link to="/auth/signin">sign in now!!</nuxt-link>
       </p>
@@ -13,7 +17,8 @@
 </template>
 
 <script>
-import firebase from '~/plugins/firebase'
+import { mapActions } from 'vuex'
+import firebase from '~/firebase/app'
 export default {
   name: "signup",
   data() {
@@ -23,19 +28,20 @@ export default {
     }
   },
   methods: {
-    signUp: function () {
-      firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-      .then(res => {
-        console.log('Create account: ', res.user.email)
-        firebase.auth().signInWithEmailAndPassword(this.email, this.password)
-        .then(r => {
-          r.user.getIdToken().then(idToken => {
-            localStorage.setItem('jwt', idToken.toString())
-          })
-          this.$router.push('/')
-        })
-      }).catch(error => {
-        alert(error.message)
+    ...mapActions('modules/user', [ 'login' ]),
+    async signUp() {
+      try {
+        const firebaseUser = await firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+        await this.writeUserData(firebaseUser.user.uid, firebaseUser.user.email)
+        await this.login(firebaseUser.user.uid)
+        await this.$router.push('/')
+      } catch (error) {
+        console.log(error.message)
+      }
+    },
+    writeUserData(userId, email) {
+      return firebase.database().ref('users/' + userId).set({
+        email: email
       })
     }
   }

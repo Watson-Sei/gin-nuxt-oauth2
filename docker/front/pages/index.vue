@@ -10,19 +10,20 @@
   </div>
 </template>
 <script>
-import firebase from '~/plugins/firebase'
+import Cookies from 'js-cookie'
+import firebase from '~/firebase/app'
 export default {
   middleware: 'authenticated',
   data() {
     return {
       msg: 'Welcome to Your Vue.js App',
-      name: firebase.auth().currentUser.email
     }
   },
   methods: {
     signOut() {
       firebase.auth().signOut().then(() => {
-        localStorage.removeItem('jwt')
+        // localStorage.removeItem('jwt')
+        Cookies.remove('access_token')
         this.$router.push('/auth/signin')
       })
     },
@@ -34,7 +35,7 @@ export default {
     },
     apiPrivate() {
       const response = this.$axios.$get('http://localhost/api/private', {
-        headers: {'Authorization': `Bearer ${localStorage.getItem('jwt')}`}
+        headers: {'Authorization': `Bearer ${Cookies.get('access_token')}`}
       })
       .then(function (response) {
         console.log(response.msg)

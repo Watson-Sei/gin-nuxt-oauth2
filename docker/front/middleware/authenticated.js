@@ -1,8 +1,5 @@
-import firebase from '~/plugins/firebase'
-
-export default function ({ redirect }) {
-  let currentUser = firebase.auth().currentUser
-  if (!currentUser) {
+export default function ({store, redirect}) {
+  if (!store.getters['modules/user/isAuthenticated']) {
     return redirect('/auth/signin')
   }
 }

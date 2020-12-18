@@ -2,9 +2,17 @@
   <div class="container">
     <div class="signin">
       <h2>Sign in</h2>
-      <input type="text" placeholder="email" v-model="email">
-      <input type="password" placeholder="password" v-model="password">
-      <button @click="signIn">Signin</button>
+      <div>
+        <form @submit.prevent="submit">
+          <label for="usernameTxt">Username:</label>
+          <input id="usernameTxt" type="email" v-model="email">
+          <label for="passwordTxt">Password:</label>
+          <input id="passwordTxt" type="password" v-model="password">
+          <button type="submit">Sign In</button>
+        </form>
+        <button class="button" @click.prevent="fbGoogleLogin">Google Login</button>
+        <button class="button" @click.prevent="fbGoogleLogout">Google Logout</button>
+      </div>
       <p>You don't have an account?
         <nuxt-link to="/auth/signup">create account now!!</nuxt-link>
       </p>
@@ -13,7 +21,8 @@
 </template>
 
 <script>
-import firebase from '~/plugins/firebase'
+import { mapActions, mapGetters } from 'vuex'
+import firebase, {googleProvider} from '~/firebase/app'
 export default {
   name: "signin",
   data() {
@@ -22,17 +31,31 @@ export default {
       password: '',
     }
   },
+  computed: {
+    ...mapGetters('modules/user', [
+      'uid'
+    ])
+  },
   methods: {
-    signIn: function () {
-      firebase.auth().signInWithEmailAndPassword(this.email, this.password)
-      .then(res => {
-        res.user.getIdToken().then(idToken => {
-          localStorage.setItem('jwt', idToken.toString())
-        })
+    ...mapActions("modules/user", [ 'login' ]),
+    async submit () {
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password).then((firebaseUser) => {
+        return this.login(firebaseUser.user)
+      }).then(() => {
         this.$router.push('/')
-      }).catch(error => {
-        alert(error.message)
+      }).catch((error) => {
+        console.log(error.message)
       })
+    },
+    // Googleアカウントログイン
+    async fbGoogleLogin() {
+      const { user } = await firebase.auth().signInWithPopup(googleProvider);
+      await this.login(user);
+      await this.$router.push('/')
+    },
+    async fbGoogleLogout() {
+      await this.logout();
+      await this.$router.push('/')
     }
   }
 }
