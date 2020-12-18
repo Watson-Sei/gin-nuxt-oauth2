@@ -1,73 +1,66 @@
 <template>
   <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        front
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+    <div class="hello">
+      <h1>{{ msg }}</h1>
+      <h2>Essential Links</h2>
+      <button @click="signOut">Sign out</button>
+      <button @click="apiPublic">public</button>
+      <button @click="apiPrivate">private</button>
     </div>
   </div>
 </template>
-
 <script>
-export default {}
+import firebase from '~/plugins/firebase'
+export default {
+  middleware: 'authenticated',
+  data() {
+    return {
+      msg: 'Welcome to Your Vue.js App',
+      name: firebase.auth().currentUser.email
+    }
+  },
+  methods: {
+    signOut() {
+      firebase.auth().signOut().then(() => {
+        localStorage.removeItem('jwt')
+        this.$router.push('/auth/signin')
+      })
+    },
+    apiPublic() {
+      const response = this.$axios.$get('http://localhost/api/public')
+      .then(function (response) {
+        console.log(response.msg);
+      });
+    },
+    apiPrivate() {
+      const response = this.$axios.$get('http://localhost/api/private', {
+        headers: {'Authorization': `Bearer ${localStorage.getItem('jwt')}`}
+      })
+      .then(function (response) {
+        console.log(response.msg)
+      })
+    }
+  }
+}
 </script>
 
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+<style scoped>
+h1, h2 {
+  font-weight: normal;
 }
-
-.title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+ul {
+  list-style-type: none;
+  padding: 0;
 }
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
+li {
+  display: inline-block;
+  margin: 0 10px;
 }
-
-.links {
-  padding-top: 15px;
+a {
+  color: #42b983;
+}
+button {
+  margin: 10px 0;
+  padding: 10px;
 }
 </style>

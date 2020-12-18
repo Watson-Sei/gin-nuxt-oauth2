@@ -9,10 +9,21 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.12.4",
+    "axios": "^0.21.0",
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.17.3",
+    "cookieparser": "^0.1.0",
     "core-js": "^3.6.5",
-    "nuxt": "^2.14.6"
+    "firebase": "^8.2.0",
+    "firebase-tools": "^9.0.0",
+    "js-cookie": "^2.2.1",
+    "jwt-decode": "^3.1.2",
+    "nuxt": "^2.14.6",
+    "save": "^2.4.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@nuxtjs/dotenv": "^1.4.1",
+    "dotenv": "^8.2.0"
+  }
 }

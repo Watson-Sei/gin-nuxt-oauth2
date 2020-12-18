@@ -1,3 +1,18 @@
+const enviroment = process.env.NODE_ENV
+require('dotenv').config({path: `config/.env.${enviroment}`})
+const {
+  API,
+  BASE_URL,
+  apiKey,
+  authDomain,
+  databaseURL,
+  projectId,
+  storageBucket,
+  messagingSenderId,
+  appId,
+  measurementId,
+} = process.env
+
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -18,6 +33,7 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
+    '@/plugins/firebase.js'
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -31,9 +47,22 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
+    '@nuxtjs/axios',
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+  },
+  env: {
+    API,
+    BASE_URL,
+    apiKey,
+    authDomain,
+    databaseURL,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+    appId,
+    measurementId,
   }
 }

@@ -26,3 +26,9 @@
 /Godeps/
 
 # End of https://www.toptal.com/developers/gitignore/api/go
+
+docker/db/data
+docker/db.env
+api/tmp
+docker/front/config
+api/service-account-file.json
