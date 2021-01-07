@@ -11,7 +11,6 @@
           <button type="submit">Sign In</button>
         </form>
         <button class="button" @click.prevent="fbGoogleLogin">Google Login</button>
-        <button class="button" @click.prevent="fbGoogleLogout">Google Logout</button>
       </div>
       <p>You don't have an account?
         <nuxt-link to="/auth/signup">create account now!!</nuxt-link>
@@ -47,14 +46,10 @@ export default {
         console.log(error.message)
       })
     },
-    // Googleアカウントログイン
+    // Google Login
     async fbGoogleLogin() {
-      const { user } = await firebase.auth().signInWithPopup(googleProvider);
+      const { user } = await firebase.auth().signInWithPopup(googleProvider)
       await this.login(user);
-      await this.$router.push('/')
-    },
-    async fbGoogleLogout() {
-      await this.logout();
       await this.$router.push('/')
     }
   }

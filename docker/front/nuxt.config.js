@@ -4,10 +4,8 @@ const {
   API,
   BASE_URL,
   apiKey,
-  authDomain,
   databaseURL,
   projectId,
-  storageBucket,
   messagingSenderId,
   appId,
   measurementId,
@@ -56,12 +54,10 @@ export default {
     API,
     BASE_URL,
     apiKey,
-    authDomain,
     databaseURL,
     projectId,
-    storageBucket,
     messagingSenderId,
     appId,
-    measurementId,
+    measurementId
   }
 }

@@ -32,14 +32,16 @@ export default {
     async signUp() {
       try {
         const firebaseUser = await firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+
         await this.writeUserData(firebaseUser.user.uid, firebaseUser.user.email)
         await this.login(firebaseUser.user.uid)
         await this.$router.push('/')
       } catch (error) {
         console.log(error.message)
+        console.log('クリエイト時のエラー')
       }
     },
-    writeUserData(userId, email) {
+    writeUserData (userId, email) {
       return firebase.database().ref('users/' + userId).set({
         email: email
       })
