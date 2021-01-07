@@ -24,3 +24,19 @@
 - email + passwordアカウントは、usernameとavatar情報を取得することができません。
 - 上記をすべて満たせるのは、googleログインだけである。
 
+
+
+```
+## /docker/front/config/.env.development
+
+API=""
+BASE_URL=""
+apiKey=""
+databaseURL=""
+projectId=""
+messagingSenderId=""
+appId=""
+measurementId=""
+```
+
+> Note: databaseURLに関しては、realtime-databaseの設定を完了しないと作成できないので注意
